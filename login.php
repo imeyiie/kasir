@@ -23,16 +23,11 @@
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
             <a class="navbar-brand" href="#">
-<<<<<<< HEAD
                 <img src="img/logo.png" alt="Beauty Unnie Logo" style="max-width: 150px; height: auto;">
-=======
-                <img src="img/logoo.png" alt="Beauty Unnie Logo" style="max-width: 150px; height: auto;">
->>>>>>> 114b103d00cc3e496018367d93bd52d1793c7180
             </a>
         </div>
     </nav>
 
-<<<<<<< HEAD
     <div class="login-container">
         <div class="login-card">
             <div class="brand-icon">
@@ -55,31 +50,6 @@
                 </div>
                 <button type="submit" class="btn btn-login w-100" name="submit">Login</button>
                 </form>
-=======
-    <form method="POST" action="ceklogin.php">
-        <div class="login-container">
-            <div class="login-card">
-                <div class="brand-icon">
-                    <img src="img/logoo.png" alt="Beauty Unnie Logo" class="logo-inside">
-                </div>
-
-                <h1>Welcome to Beauty Unnie</h1>
-                 <p>Please log in to continue</p>
-                    <div class="mb-3 icon-input-group">
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-user"></i></span>
-                            <input type="text" class="form-control" placeholder="Enter Username" name="user" required>
-                        </div>
-                    </div>
-                    <div class="mb-3 icon-input-group">
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                            <input type="password" class="form-control" placeholder="Enter Password" name="pass" required>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-login w-100" name="submit">Login</button> 
-            </div>
->>>>>>> 114b103d00cc3e496018367d93bd52d1793c7180
         </div>
     </form>
 

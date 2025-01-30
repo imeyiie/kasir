@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?php
 include 'connection.php'; include 'sidebar.php';
 
@@ -9,7 +8,7 @@ $sql = "SELECT b.id, b.id_barang, b.nama_barang, b.merk, b.harga_beli, b.harga_j
 $result = $conn->query($sql);
 ?>
 
-<div class="container mt-4">
+<div class="container">
     <div class="card">
         <div class="card-body">
             <h2 class="mb-4">Data Barang</h2>
@@ -65,19 +64,12 @@ $result = $conn->query($sql);
                                 echo "<td>" . $row['harga_beli'] . "</td>";
                                 echo "<td>" . $row['harga_jual'] . "</td>";
                                 echo "<td>" . $row['satuan_barang'] . "</td>";
-                                echo "<td>
-                                        <a href='detail-kelas2.php?id=" . $row['id'] . "'>
-                                            <button class='btn btn-primary btn-sm'>
-                                                <i class='fas fa-info-circle'></i> 
-                                            </button>
-                                        </a>
-                                    
-                                        <a href='edit-kelas2.php?id=" . $row['id'] . "'>
+                                echo "<td>    
+                                        <a href='edit-barang.php?id=" . $row['id'] . "'>
                                             <button class='btn btn-warning btn-sm'>
                                                 <i class='fas fa-pencil-alt'></i> 
                                             </button>
                                         </a>
-                                    
                                         <a href='hapus-barang.php?id=" . $row['id'] . "'>
                                             <button class='btn btn-danger btn-sm'>
                                                 <i class='fas fa-trash-alt'></i> 
@@ -168,8 +160,8 @@ if ($row) {
                             <td><input type="number" required class="form-control" name="stok"></td>
                         </tr>
                         <tr>
-                            <td>Tanggal Update</td>
-                            <td><input type="text" class="form-control" name="tanggal_update" value="<?php echo date('Y-m-d H:i:s'); ?>" readonly></td> 
+                            <td>Tanggal Input</td>
+                            <td><input type="text" class="form-control" name="tgl_input" value="<?php echo date('Y-m-d H:i:s'); ?>" readonly></td> 
                         </tr>
                     </table>
                 </div>
@@ -212,10 +204,10 @@ if (isset($_POST['submit'])) {
     $harga_jual = $_POST['harga_jual'];
     $satuan_barang = $_POST['satuan_barang'];
     $stok = $_POST['stok'];
-    $tanggal_update = $_POST['tanggal_update']; 
+    $tgl_input = $_POST['tgl_input']; 
 
     $sql = "INSERT INTO `barang` (`id_barang`, `id_kategori`, `nama_barang`, `merk`, `harga_beli`, `harga_jual`, `satuan_barang`, `stok`, `tgl_input`) 
-            VALUES ('$id_barang', '$kelas', '$nama_barang', '$merk', '$harga_beli', '$harga_jual', '$satuan_barang', '$stok', '$tanggal_update')";
+            VALUES ('$id_barang', '$kelas', '$nama_barang', '$merk', '$harga_beli', '$harga_jual', '$satuan_barang', '$stok', '$tgl_input')";
 
     $query = mysqli_query($conn, $sql);
 
@@ -282,185 +274,10 @@ window.onload = function() {
             if (alertElement) {
                 setTimeout(function() {
                     alertElement.style.display = 'none';
-                }, 1000); 
+                }, 1500); 
             }
         };
 
 </script>
 
 <?php include 'footer.php'; ?>
-=======
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Master Barang - Beauty Unnie</title>
-
-    <link rel="stylesheet" href="assets/bootstrap/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/icons/fontawesome.min.css">
-    <link rel="stylesheet" href="assets/login.css">
-</head>
-<body>
-                <?php
-                include 'config/connection.php';
-
-                $sql = "SELECT b.id_barang, b.nama_barang, b.merk, b.harga_beli, b.harga_jual, b.satuan, b.stok, b.tgl_input, b.tgl_update, k.nama_kategori 
-                        FROM barang b
-                        JOIN kategori k ON b.id_kategori = k.id_kategori";
-                $result = $conn->query($sql);
-                ?>
-
-                <?php include 'header.php'; ?>
-
-                <div class="container mt-4">
-                    <h2 class="mb-4">Data Barang</h2>
-
-                    <?php if (isset($_GET['success'])) { ?>
-                        <div class="alert alert-success">
-                            <p>Data berhasil disimpan!</p>
-                        </div>
-                    <?php } ?>
-
-                    <div class="mb-3">
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahBarang">
-                            <i class="fas fa-plus"></i> Tambah Barang
-                        </button>
-                    </div>
-
-                    <div class="table-responsive">
-                        <table class="table table-striped table-bordered">
-                            <thead class="table-primary">
-                                <tr>
-                                    <th>No.</th>
-                                    <th>ID Barang</th>
-                                    <th>Kategori</th>
-                                    <th>Nama Barang</th>
-                                    <th>Merk</th>
-                                    <th>Harga Beli</th>
-                                    <th>Harga Jual</th>
-                                    <th>Satuan</th>
-                                    <th>Stok</th>
-                                    <th>Tgl Input</th>
-                                    <th>Tgl Update</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                if ($result->num_rows > 0) {
-                                    $no = 1;
-                                    while ($row = $result->fetch_assoc()) {
-                                        echo "<tr>";
-                                        echo "<td>" . $no++ . "</td>";
-                                        echo "<td>" . $row['id_barang'] . "</td>";
-                                        echo "<td>" . $row['nama_kategori'] . "</td>";
-                                        echo "<td>" . $row['nama_barang'] . "</td>";
-                                        echo "<td>" . $row['merk'] . "</td>";
-                                        echo "<td>Rp " . number_format($row['harga_beli'], 0, ',', '.') . "</td>";
-                                        echo "<td>Rp " . number_format($row['harga_jual'], 0, ',', '.') . "</td>";
-                                        echo "<td>" . $row['satuan'] . "</td>";
-                                        echo "<td>" . $row['stok'] . "</td>";
-                                        echo "<td>" . $row['tgl_input'] . "</td>";
-                                        echo "<td>" . $row['tgl_update'] . "</td>";
-                                        echo "<td>
-                                                <a href='#' class='btn btn-sm btn-primary'>
-                                                    <i class='fas fa-edit'></i> Edit
-                                                </a>
-                                                <a href='#' class='btn btn-sm btn-danger'>
-                                                    <i class='fas fa-trash'></i> Hapus
-                                                </a>
-                                            </td>";
-                                        echo "</tr>";
-                                    }
-                                } else {
-                                    echo "<tr><td colspan='12'>Tidak ada data barang</td></tr>";
-                                }
-                                ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div id="modalTambahBarang" class="modal fade" tabindex="-1" aria-labelledby="modalTambahBarangLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="modalTambahBarangLabel">Tambah Barang</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <form action="fungsi/tambah_barang.php" method="POST">
-                                <div class="modal-body">
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="id_barang" class="form-label">ID Barang</label>
-                                            <input type="text" name="id_barang" class="form-control" required>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label for="kategori" class="form-label">Kategori</label>
-                                            <select name="id_kategori" class="form-control" required>
-                                                <option value="">Pilih Kategori</option>
-                                                <?php
-                                                $kategoriQuery = "SELECT * FROM kategori";
-                                                $kategoriResult = $conn->query($kategoriQuery);
-                                                while ($kategori = $kategoriResult->fetch_assoc()) {
-                                                    echo "<option value='" . $kategori['id_kategori'] . "'>" . $kategori['nama_kategori'] . "</option>";
-                                                }
-                                                ?>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="nama_barang" class="form-label">Nama Barang</label>
-                                        <input type="text" name="nama_barang" class="form-control" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="merk" class="form-label">Merk</label>
-                                        <input type="text" name="merk" class="form-control" required>
-                                    </div>  
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="harga_beli" class="form-label">Harga Beli</label>
-                                            <input type="number" name="harga_beli" class="form-control" required>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label for="harga_jual" class="form-label">Harga Jual</label>
-                                            <input type="number" name="harga_jual" class="form-control" required>
-                                        </div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="satuan" class="form-label">Satuan</label>
-                                        <select name="satuan" class="form-control" required>
-                                            <option value="PCS">PCS</option>
-                                            <option value="BOX">BOX</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="stok" class="form-label">Stok</label>
-                                        <input type="number" name="stok" class="form-control" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="tgl_input" class="form-label">Tanggal Input</label>
-                                        <input type="text" name="tgl_input" class="form-control" readonly value="<?php echo date('d F Y'); ?>">
-                                    </div>
-
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="submit" class="btn btn-primary">Simpan</button>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-            </div> 
-        </div>
-    </div>
-
-    <?php include 'footer.php'; ?>
-
-    <script src="assets/bootstrap/bootstrap.bundle.min.js"></script>
-</body>
-</html>
->>>>>>> 114b103d00cc3e496018367d93bd52d1793c7180

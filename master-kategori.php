@@ -6,7 +6,7 @@
     $kategoriResult = $conn->query($kategoriSql);
     ?>
 
-<div class="container mt-4">
+<div class="container">
     <div class="card">
         <div class="card-body">
             <h2 class="mb-4">Data Kategori</h2>
@@ -24,8 +24,8 @@
             <form id="kategoriForm" action="proses-kategori.php" method="POST">
                 <input type="hidden" id="id_kategori" name="id_kategori">
                 <div class="mb-3 d-flex">
-                    <input type="text" class="form-control form-control-lg me-2" id="nama_kategori" name="nama_kategori" placeholder="Masukkan Kategori Barang Baru" style="width: 400px;" required>
-                    <button type="submit" id="actionButton" name="action" value="insert" class="btn btn-primary btn-lg me-2">+ Insert Data</button>
+                    <input type="text" class="form-control form-control-md me-2" id="nama_kategori" name="nama_kategori" placeholder="Masukkan Kategori Barang Baru" style="width: 350px;" required>
+                    <button type="submit" id="actionButton" name="action" value="insert" class="btn btn-primary btn-md me-2">+ Tambah Data</button>
                 </div>
             </form>
 
@@ -47,8 +47,8 @@
                                 echo "<td>" . $no++ . "</td>";
                                 echo "<td>" . $kategori['nama_kategori'] . "</td>";
                                 echo "<td>
-                                        <button type='button' class='btn btn-sm btn-primary' onclick='editKategori(" . $kategori['id_kategori'] . ", `" . $kategori['nama_kategori'] . "`)' title='Edit'>
-                                            <i class='fas fa-edit'></i>
+                                        <button type='button' class='btn btn-sm btn-warning' onclick='editKategori(" . $kategori['id_kategori'] . ", `" . $kategori['nama_kategori'] . "`)' title='Edit'>
+                                            <i class='fas fa-pencil-alt'></i> 
                                         </button>
                                         <a href='proses-kategori.php?action=delete&id=" . $kategori['id_kategori'] . "' class='btn btn-sm btn-danger' title='Hapus' onclick='return confirm(\"Yakin ingin menghapus kategori ini?\")'>
                                             <i class='fas fa-trash'></i>
@@ -75,7 +75,8 @@
             isEditing = true;
             document.getElementById('id_kategori').value = id;
             document.getElementById('nama_kategori').value = nama;
-            document.getElementById('actionButton').innerText = 'Update Data';
+            document.getElementById('actionButton').innerText = 'Edit Data';
+            document.getElementById('actionButton').classList.add('btn-warning');
             document.getElementById('actionButton').value = 'update';
         }
 
