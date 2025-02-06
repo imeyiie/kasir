@@ -25,13 +25,22 @@ $tanggal = $data['tanggal'];
 $conn->begin_transaction();
 
 try {
+    $stmt_check_stok = $conn->prepare("SELECT stok FROM barang WHERE id_barang = ?");
+    $stmt_update_stok = $conn->prepare("UPDATE barang SET stok = ? WHERE id_barang = ?");
+    $stmt_penjualan = $conn->prepare("INSERT INTO penjualan (id_barang, id_member, jumlah, total, tanggal_input)
+                                      VALUES (?, ?, ?, ?, ?)");
+    $stmt_nota = $conn->prepare("INSERT INTO nota (id_barang, id_member, jumlah, total, tanggal_input)
+                                 VALUES (?, ?, ?, ?, ?)");
+
     foreach ($keranjang as $barang) {
         $id_barang = $barang['id'];
         $jumlah = $barang['jumlah'];
         $total_harga = $barang['harga'] * $jumlah;
 
-        $sql_check_stok = "SELECT stok FROM barang WHERE id_barang = '$id_barang'";
-        $result = $conn->query($sql_check_stok);
+        $stmt_check_stok->bind_param('s', $id_barang);
+        $stmt_check_stok->execute();
+        $result = $stmt_check_stok->get_result();
+
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             $stok_tersedia = $row['stok'];
@@ -42,17 +51,15 @@ try {
             }
 
             $new_stok = $stok_tersedia - $jumlah;
-            $sql_update_stok = "UPDATE barang SET stok = '$new_stok' WHERE id_barang = '$id_barang'";
-            $conn->query($sql_update_stok);
+            $stmt_update_stok->bind_param('is', $new_stok, $id_barang);
+            $stmt_update_stok->execute();
         }
 
-        $sql_penjualan = "INSERT INTO penjualan (id_barang, id_member, jumlah, total, tanggal_input)
-                          VALUES ('$id_barang', '$id_member', '$jumlah', '$total_harga', '$tanggal')";
-        $conn->query($sql_penjualan);
+        $stmt_penjualan->bind_param('siids', $id_barang, $id_member, $jumlah, $total_harga, $tanggal);
+        $stmt_penjualan->execute();
 
-        $sql_nota = "INSERT INTO nota (id_barang, id_member, jumlah, total, tanggal_input)
-                     VALUES ('$id_barang', '$id_member', '$jumlah', '$total_harga', '$tanggal')";
-        $conn->query($sql_nota);
+        $stmt_nota->bind_param('siids', $id_barang, $id_member, $jumlah, $total_harga, $tanggal);
+        $stmt_nota->execute();
     }
 
     $conn->commit();

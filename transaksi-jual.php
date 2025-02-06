@@ -164,15 +164,35 @@
     }
 
     function tambahKeKeranjang(id, nama, harga) {
-        const barangIndex = keranjang.findIndex(item => item.id === id);
-
-        if (barangIndex === -1) {
-            keranjang.push({ id, nama, harga, jumlah: 1 });
-        } else {
-            keranjang[barangIndex].jumlah += 1;
-        }
-
-        updateKeranjangTable();
+        fetch(`check-stok.php?id_barang=${id}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'error') {
+                    alert('Stok barang tidak mencukupi!');
+                    return;
+                }
+                
+                const stokTersedia = data.stok;
+                const jumlahBarang = prompt(`Stok tersedia: ${stokTersedia}. Berapa jumlah yang ingin dibeli?`);
+                
+                if (jumlahBarang <= 0 || jumlahBarang > stokTersedia) {
+                    alert('Jumlah yang dibeli tidak valid atau melebihi stok tersedia.');
+                    return;
+                }
+                
+                const barangIndex = keranjang.findIndex(item => item.id === id);
+                if (barangIndex === -1) {
+                    keranjang.push({ id, nama, harga, jumlah: parseInt(jumlahBarang) });
+                } else {
+                    keranjang[barangIndex].jumlah += parseInt(jumlahBarang);
+                }
+                
+                updateKeranjangTable();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat memeriksa stok.');
+            });
     }
 
     function updateKeranjangTable() {
@@ -187,9 +207,6 @@
                     <td>Rp ${(barang.harga * barang.jumlah).toLocaleString()}</td>
                     <td>${nmMember}</td>
                     <td>
-                        <button class="btn btn-warning btn-sm" onclick="editJumlah('${barang.id}')">
-                            <i class="fa fa-edit"></i>  
-                        </button>
                         <button class="btn btn-danger btn-sm" onclick="hapusDariKeranjang('${barang.id}')">
                             <i class="fa fa-trash"></i>
                         </button>
@@ -199,35 +216,6 @@
 
         const totalSemua = keranjang.reduce((total, item) => total + (item.harga * item.jumlah), 0);
         document.getElementById('total-semua').value = `Rp ${totalSemua.toLocaleString()}`;
-    }
-
-    function editJumlah(id) {
-        const barangIndex = keranjang.findIndex(item => item.id === id);
-        
-        if (barangIndex !== -1) {
-            const jumlahCell = document.getElementById(`jumlah-${id}`);
-            
-            // Membuat input untuk mengedit jumlah
-            const inputField = document.createElement('input');
-            inputField.type = 'number';
-            inputField.value = keranjang[barangIndex].jumlah;
-            inputField.min = 1;
-            inputField.className = 'form-control form-control-sm';
-            
-            // Tombol untuk menyimpan perubahan
-            const saveButton = document.createElement('button');
-            saveButton.className = 'btn btn-success btn-sm';
-            saveButton.innerHTML = 'Simpan';
-            saveButton.onclick = () => {
-                keranjang[barangIndex].jumlah = parseInt(inputField.value, 10);
-                updateKeranjangTable();  // Update tabel setelah perubahan
-            };
-
-            // Menyembunyikan jumlah dan menampilkan input untuk edit jumlah
-            jumlahCell.innerHTML = '';
-            jumlahCell.appendChild(inputField);
-            jumlahCell.appendChild(saveButton);
-        }
     }
 
     document.getElementById('reset-keranjang').addEventListener('click', () => {
@@ -240,7 +228,6 @@
         keranjang = keranjang.filter(item => item.id !== id);
         updateKeranjangTable();
     }
-
 
     document.getElementById('tanggal-sekarang').querySelector('strong').textContent = new Date().toLocaleDateString('id-ID', {
         day: '2-digit',
@@ -280,34 +267,36 @@
     });
 
     function simpanKeDatabase(total, bayar, kembalian) {
-        const dataTransaksi = {
-            keranjang: keranjang, 
-            total: total,
-            bayar: bayar,
-            kembalian: kembalian,
-            tanggal: new Date().toISOString().split('T')[0], 
-        };
-
         fetch('simpan-transaksi.php', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(dataTransaksi),
+            body: JSON.stringify({
+                total: total,
+                bayar: bayar,
+                kembalian: kembalian,
+                keranjang: keranjang, 
+                tanggal: new Date().toISOString()
+            })
         })
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                alert('Data berhasil disimpan ke database!');
-                bayarInput.value = '';
-                kembaliInput.value = '';
+                alert('Transaksi berhasil disimpan!');
+                keranjang.forEach(item => {
+                    fetch(`check-stok.php?id_barang=${item.id}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.stok === 0) {
+                                alert(`Stok barang ${item.nama} habis!`);
+                            }
+                        });
+                });
             } else {
-                alert('Gagal menyimpan data ke database: ' + data.message);
+                alert('Gagal menyimpan transaksi!');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Terjadi kesalahan saat menyimpan data ke database.');
+            alert('Terjadi kesalahan saat menyimpan transaksi.');
         });
     }
 
@@ -316,36 +305,40 @@
 
         const keranjangHtml = keranjang.map(item => `
             ${item.nama} - ${item.jumlah} x Rp ${(item.harga).toLocaleString()} = Rp ${(item.harga * item.jumlah).toLocaleString()}
-            `).join('<br>');
-            
-            printWindow.document.write(`
-                <html>
-                    <head><title>Transaksi Print</title></head>
-                    <body style="font-family: 'Courier New', Courier, monospace; font-size: 14px; text-align: center; padding: 20px;">
-                        <h2>STRUK PENJUALAN</h2>
-                        <p><strong>Tanggal:</strong> ${new Date().toLocaleDateString('id-ID', {
-                            day: '2-digit',
-                            month: 'long',
-                            year: 'numeric',
-                            weekday: 'long'
-                        })}</p>
-                        <p><strong>Kasir:</strong> ${nmMember}</p>
-                        <hr>
-                        <p>${keranjangHtml}</p>
-                        <hr>
-                        <p><strong>Total:</strong> Rp ${document.getElementById('total-semua').value}</p>
-                        <p><strong>Bayar:</strong> Rp ${bayarInput.value}</p>
-                        <p><strong>Kembalian:</strong> Rp ${kembaliInput.value}</p>
-                        <hr>
-                        <p>Terima kasih telah berbelanja!</p>
-                    </body>
-                </html>
-            `);
-            printWindow.document.close();
-            printWindow.print();
+        `).join('<br>');
+
+        const total = document.getElementById('total-semua').value; 
+        const bayar = bayarInput.value;  
+        const kembalian = kembaliInput.value;  
+
+        const formattedBayar = bayar ? `Rp ${parseInt(bayar.replace(/\D/g, ''), 10).toLocaleString()}` : 'Rp 0';
+        const formattedKembalian = kembalian ? `Rp ${parseInt(kembalian.replace(/\D/g, ''), 10).toLocaleString()}` : 'Rp 0';
+
+        printWindow.document.write(`
+            <html>
+                <head><title>Transaksi Print</title></head>
+                <body style="font-family: 'Courier New', Courier, monospace; font-size: 14px; text-align: center; padding: 20px;">
+                    <h2>STRUK PENJUALAN</h2>
+                    <p><strong>Tanggal:</strong> ${new Date().toLocaleDateString('id-ID', {
+                        day: '2-digit',
+                        month: 'long',
+                        year: 'numeric',
+                        weekday: 'long'
+                    })}</p>
+                    <p><strong>Kasir:</strong> ${nmMember}</p>
+                    <hr>
+                    <p>${keranjangHtml}</p>
+                    <hr>
+                    <p><strong>Total:</strong> ${total}</p>
+                    <p><strong>Bayar:</strong> ${formattedBayar}</p>
+                    <p><strong>Kembalian:</strong> ${formattedKembalian}</p>
+                    <hr>
+                    <p>Terima kasih telah berbelanja!</p>
+                </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
     });
 
-
 </script>
-
-<?php include 'footer.php'; ?>

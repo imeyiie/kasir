@@ -171,8 +171,8 @@ if ($row) {
                             <td>Satuan Barang</td>
                             <td>
                                 <select class="form-control" name="satuan_barang" required>
-                                    <option value="pcs">PCS</option>
-                                    <option value="box">Box</option>
+                                    <option value="PCS">PCS</option>
+                                    <option value="BOX">Box</option>
                                 </select>
                             </td>
                         </tr>

@@ -280,7 +280,6 @@ include "connection.php";
                 </a>
                 <div id="transaksiMenu" class="collapse">
                     <a class="collapse-item" href="transaksi-jual.php">Transaksi Jual</a>
-                    <a class="collapse-item" href="riwayat-penjualan.php">Riwayat Penjualan</a>
                     <a class="collapse-item" href="laporan-transaksi.php">Laporan Transaksi</a>
                 </div>
             </div>
@@ -343,7 +342,6 @@ include "connection.php";
                 </a>
                 <div id="transaksiMenu" class="collapse">
                     <a class="collapse-item" href="transaksi-jual.php">Transaksi Jual</a>
-                    <a class="collapse-item" href="riwayat-penjualan.php">Riwayat Penjualan</a>
                     <a class="collapse-item" href="laporan-transaksi.php">Laporan Transaksi</a>
                 </div>
             </div>
