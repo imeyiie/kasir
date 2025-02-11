@@ -1,4 +1,15 @@
-<?php include 'connection.php'; include 'sidebar.php'; ?>
+<?php 
+include 'connection.php';
+include 'sidebar.php'; 
+
+$query_toko = "SELECT nama_toko, alamat_toko, tlp FROM toko LIMIT 1";
+$result_toko = $conn->query($query_toko);
+$store = $result_toko->fetch_assoc();
+
+$nama_toko = $store['nama_toko'];
+$alamat_toko = $store['alamat_toko'];
+$tlp = $store['tlp'];
+?>
 
 <div class="container">
     <div class="card">
@@ -280,23 +291,29 @@
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                alert('Transaksi berhasil disimpan!');
+                // Kamu bisa ganti dengan log di console atau update tampilan di halaman
+                console.log('Transaksi berhasil disimpan!');
+                
+                // Misalnya, mengosongkan keranjang atau mengupdate UI lainnya
+                // document.getElementById('keranjang').innerHTML = ''; 
+
+                // Mengecek stok barang
                 keranjang.forEach(item => {
                     fetch(`check-stok.php?id_barang=${item.id}`)
                         .then(response => response.json())
                         .then(data => {
                             if (data.stok === 0) {
-                                alert(`Stok barang ${item.nama} habis!`);
+                                console.log(`Stok barang ${item.nama} habis!`);
                             }
                         });
                 });
             } else {
-                alert('Gagal menyimpan transaksi!');
+                console.log('Gagal menyimpan transaksi!');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Terjadi kesalahan saat menyimpan transaksi.');
+            console.log('Terjadi kesalahan saat menyimpan transaksi.');
         });
     }
 
@@ -319,6 +336,8 @@
                 <head><title>Transaksi Print</title></head>
                 <body style="font-family: 'Courier New', Courier, monospace; font-size: 14px; text-align: center; padding: 20px;">
                     <h2>STRUK PENJUALAN</h2>
+                    <p><?php echo $nama_toko; ?> , <?php echo $alamat_toko; ?></p>
+                    <p>No. Telp : <?php echo $tlp; ?></p>
                     <p><strong>Tanggal:</strong> ${new Date().toLocaleDateString('id-ID', {
                         day: '2-digit',
                         month: 'long',

@@ -1,5 +1,5 @@
-<?php 
-include 'connection.php'; 
+<?php
+include 'connection.php';
 include 'sidebar.php';
 
 $bulan_tes = array(
@@ -19,6 +19,14 @@ $bulan_tes = array(
 
 $selectedMonth = isset($_POST['bln']) ? $_POST['bln'] : date('m');
 $selectedYear = isset($_POST['thn']) ? $_POST['thn'] : date('Y');
+
+$query_toko = "SELECT nama_toko, alamat_toko, tlp FROM toko LIMIT 1";
+$result_toko = $conn->query($query_toko);
+$store = $result_toko->fetch_assoc();
+
+$nama_toko = $store['nama_toko'];
+$alamat_toko = $store['alamat_toko'];
+$tlp = $store['tlp'];
 ?>
 
 <div class="container custom-container">
@@ -26,7 +34,7 @@ $selectedYear = isset($_POST['thn']) ? $_POST['thn'] : date('Y');
 
     <div class="card p-3 mb-4">
         <h5>Cari Laporan Perbulan</h5>
-        <form method="post" action="laporan-penjualan.php?cari=ok">
+        <form method="post" action="laporan-transaksi.php?cari=ok">
             <div class="row">
                 <div class="col-md-4">
                     <label>Pilih Bulan</label>
@@ -55,7 +63,10 @@ $selectedYear = isset($_POST['thn']) ? $_POST['thn'] : date('Y');
                 </div>
                 <div class="col-md-4 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary me-2"><i class="fa fa-search"></i> Cari</button>
-                    <a href="laporan-penjualan.php" class="btn btn-success me-2"><i class="fa fa-refresh"></i> Refresh</a>
+                    <a href="laporan-transaksi.php" class="btn btn-success me-2"><i class="fa fa-refresh"></i>
+                        Refresh</a>
+                    <button type="button" class="btn btn-secondary me-2" onclick="printLaporan()"><i
+                            class="fa fa-print"></i> Print</button>
                 </div>
             </div>
         </form>
@@ -63,14 +74,17 @@ $selectedYear = isset($_POST['thn']) ? $_POST['thn'] : date('Y');
 
     <div class="card p-3 mb-4">
         <h5>Pilih Hari</h5>
-        <form method="post" action="laporan-penjualan.php?hari=cek">
+        <form method="post" action="laporan-transaksi.php?hari=cek">
             <div class="row">
                 <div class="col-md-4">
                     <input type="date" class="form-control" name="hari" value="<?= date('Y-m-d'); ?>">
                 </div>
                 <div class="col-md-4 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary me-2"><i class="fa fa-search"></i> Cari</button>
-                    <a href="laporan-penjualan.php" class="btn btn-success me-2"><i class="fa fa-refresh"></i> Refresh</a>
+                    <a href="laporan-transaksi.php" class="btn btn-success me-2"><i class="fa fa-refresh"></i>
+                        Refresh</a>
+                    <button type="button" class="btn btn-secondary me-2" onclick="printLaporan()"><i
+                            class="fa fa-print"></i> Print </button>
                 </div>
             </div>
         </form>
@@ -78,7 +92,7 @@ $selectedYear = isset($_POST['thn']) ? $_POST['thn'] : date('Y');
 
     <div class="card p-3 mb-4">
         <div class="table-responsive">
-            <table class="table table-bordered table-sm">
+            <table class="table table-bordered table-sm" id="tabelTransaksi">
                 <thead>
                     <tr style="background:#DFF0D8;color:#333;">
                         <th>No</th>
@@ -133,7 +147,7 @@ $selectedYear = isset($_POST['thn']) ? $_POST['thn'] : date('Y');
                     $bayar = 0;
                     $jumlah = 0;
                     $modal = 0;
-                    
+
                     while ($row = $result->fetch_assoc()) {
                         $bayar += $row['total'];
                         $modal += $row['harga_beli'] * $row['jumlah'];
@@ -149,7 +163,8 @@ $selectedYear = isset($_POST['thn']) ? $_POST['thn'] : date('Y');
                             <td><?php echo $row['nm_member']; ?></td>
                             <td><?php echo $row['tanggal_input']; ?></td>
                         </tr>
-                        <?php $no++; } ?>
+                        <?php $no++;
+                    } ?>
                 </tbody>
                 <tfoot>
                     <tr>
@@ -158,10 +173,79 @@ $selectedYear = isset($_POST['thn']) ? $_POST['thn'] : date('Y');
                         <th>Rp.<?php echo number_format($modal); ?>,-</th>
                         <th>Rp.<?php echo number_format($bayar); ?>,-</th>
                         <th style="background:#0bb365;color:#fff;">Keuntungan</th>
-                        <th style="background:#0bb365;color:#fff;">Rp.<?php echo number_format($bayar - $modal); ?>,-</th>
+                        <th style="background:#0bb365;color:#fff;">Rp.<?php echo number_format($bayar - $modal); ?>,-
+                        </th>
                     </tr>
                 </tfoot>
             </table>
         </div>
     </div>
 </div>
+
+<script>
+    function printLaporan() {
+        var tanggalCetak = new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+        var nmMember = "<?php echo isset($_SESSION['nm_member']) ? $_SESSION['nm_member'] : 'Unknown Member'; ?>";  // Ambil nm_member dari session
+
+        var header = `
+    <div style="text-align:center; font-family: Arial, sans-serif;">
+        <h2 style="font-size: 28px; font-weight: bold;">Laporan Keuangan</h2>
+        <h3 style="font-size: 20px; font-weight: normal; color: #555;">Periode: <?php echo $bulan_tes[$selectedMonth] . ' ' . $selectedYear; ?></h3>
+        <hr style="border-top: 2px solid #333; width: 80%; margin: 10px auto;">
+        <div style="font-size: 18px; color: #333;">
+            <p>Nama Toko: <?php echo $nama_toko; ?> , Alamat Toko : <?php echo $alamat_toko; ?></p>
+            <p>No. Telp : <?php echo $tlp; ?></p>
+        </div>
+        <hr style="border-top: 1px solid #ddd; width: 80%; margin: 10px auto;">
+        <div style="text-align: right; font-size: 16px; margin-right: 20px;">
+            <p>Dicetak oleh: <?php echo $_SESSION['nm_member']; ?></p>
+        </div>
+    </div>
+`;
+
+        var tabel = document.getElementById('tabelTransaksi').outerHTML;
+
+        var footer = `
+        <div style="margin-top:30px; text-align:right;">
+            <p>Cimahi, ${tanggalCetak}</p>
+            <p>Mengetahui,</p>
+            <br><br><br>
+            <p>_______________________</p>
+            <p>(Nama Penanggung Jawab)</p>
+        </div>
+    `;
+
+        var content = `
+        <html>
+            <head>
+                <title>Cetak Laporan</title>
+                <style>
+                    body { font-family: Arial, sans-serif; }
+                    table { width: 100%; border-collapse: collapse; }
+                    th, td { border: 1px solid black; padding: 8px; text-align: left; }
+                    th { background-color: #f2f2f2; }
+                    @media print {
+                        @page { margin: 20mm; }
+                        body { margin: 0; padding: 10px; }
+                    }
+                </style>
+            </head>
+            <body>
+                ${header}
+                ${tabel}
+                ${footer}
+            </body>
+        </html>
+    `;
+
+        var printWindow = window.open('', '', 'width=900,height=600');
+        printWindow.document.open();
+        printWindow.document.write(content);
+        printWindow.document.close();
+
+        printWindow.onload = function () {
+            printWindow.print();
+            printWindow.close();
+        };
+    }
+</script>

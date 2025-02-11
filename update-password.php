@@ -14,7 +14,7 @@ if (isset($_SESSION['id_member']) && $_SESSION['id_member'] > 0) {
         if (mysqli_query($conn, $query)) {
             header("Location: profile-petugas.php?success-pass=1");
             exit;
-        } else {    
+        } else {
             echo "<script>alert('Terjadi kesalahan saat mengganti password.');</script>";
             echo "<script>window.location.href = 'profile-petugas.php';</script>";
         }

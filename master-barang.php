@@ -292,16 +292,16 @@ ob_end_flush();
 ?>
 
 <script>
-const searchInput = document.getElementById("searchInput");
 searchInput.addEventListener("keyup", function() {
     let filter = searchInput.value.toLowerCase();
     let rows = document.querySelectorAll("#barangTable tbody tr");
 
     rows.forEach(row => {
-        let namaBarang = row.cells[3].textContent.toLowerCase();
-        let merk = row.cells[4].textContent.toLowerCase();
+        let idBarang = row.cells[1].textContent.toLowerCase();
+        let namaBarang = row.cells[3].textContent.toLowerCase(); 
+        let merk = row.cells[4].textContent.toLowerCase(); 
 
-        if (namaBarang.includes(filter) || merk.includes(filter)) {
+        if (idBarang.includes(filter) || namaBarang.includes(filter) || merk.includes(filter)) {
             row.style.display = "";
         } else {
             row.style.display = "none";
@@ -341,7 +341,4 @@ function setDeleteId(id) {
     document.getElementById('id_delete').value = id;
 }
 
-
 </script>
-
-<?php include 'footer.php'; ?>
