@@ -332,7 +332,7 @@ window.onload = function() {
         if (alertElement) {
             setTimeout(function() {
                 alertElement.style.display = 'none';
-            }, 1500); 
+            }, 3000); 
         }
 };
 

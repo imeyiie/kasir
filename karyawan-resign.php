@@ -33,7 +33,7 @@
 
             <?php
             if (isset($_GET['success-resign'])) {
-                echo '<div class="alert alert-danger" role="alert" id="alert">Data Petugas berhasil dipindahkan ke resign!</div>';
+                echo '<div class="alert alert-danger" role="alert" id="alert">Data petugas berhasil dipindahkan ke resign!</div>';
             }
             ?>
 

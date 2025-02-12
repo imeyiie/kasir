@@ -101,7 +101,7 @@ if (isset($_SESSION['id_member']) && $_SESSION['id_member'] > 0) {
         if (alertElement) {
             setTimeout(function() {
                 alertElement.style.display = 'none';
-            }, 1500);
+            }, 3000);
         }
     };
 </script>

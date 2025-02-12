@@ -18,9 +18,9 @@
 
                 <?php
                 if (isset($_GET['success-insert'])) {
-                    echo '<div class="alert alert-primary" role="alert" id="alert">Data Petugas berhasil ditambahkan!</div>';
+                    echo '<div class="alert alert-primary" role="alert" id="alert">Data petugas berhasil ditambahkan!</div>';
                 } elseif (isset($_GET['success-restore'])) {
-                    echo '<div class="alert alert-warning" role="alert" id="alert">Data Petugas berhasil dipulihkan!</div>';
+                    echo '<div class="alert alert-warning" role="alert" id="alert">Data petugas berhasil dipulihkan!</div>';
                 }
                 ?>
 
