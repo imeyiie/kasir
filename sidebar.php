@@ -294,7 +294,6 @@ include "connection.php";
                 </a>
                 <div id="karyawanMenu" class="collapse">
                     <a class="collapse-item" href="karyawan-resign.php">Karyawan Resign</a>
-                    <a class="collapse-item" href="delete-data-karyawan.php">Delete Data Karyawan</a>
                 </div>
             </div>
 

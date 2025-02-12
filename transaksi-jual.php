@@ -291,13 +291,8 @@ $tlp = $store['tlp'];
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                // Kamu bisa ganti dengan log di console atau update tampilan di halaman
                 console.log('Transaksi berhasil disimpan!');
                 
-                // Misalnya, mengosongkan keranjang atau mengupdate UI lainnya
-                // document.getElementById('keranjang').innerHTML = ''; 
-
-                // Mengecek stok barang
                 keranjang.forEach(item => {
                     fetch(`check-stok.php?id_barang=${item.id}`)
                         .then(response => response.json())

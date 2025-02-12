@@ -101,9 +101,11 @@ if (isset($_SESSION['id_member']) && $_SESSION['id_member'] > 0) {
         if (alertElement) {
             setTimeout(function() {
                 alertElement.style.display = 'none';
-            }, 1500); // 1500 ms = 1.5 detik
+            }, 1500);
         }
     };
 </script>
 
 <?php include "footer.php"; ?>
+
+<script src="bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>

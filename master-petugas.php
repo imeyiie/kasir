@@ -17,10 +17,10 @@
                 <h2 class="mb-4">Data Petugas</h2>
 
                 <?php
-                if (isset($_GET['success-resign'])) {
-                    echo '<div class="alert alert-danger" role="alert" id="alert">Data User berhasil dipindahkan ke resign!</div>';
-                } elseif (isset($_GET['success-insert'])) {
-                    echo '<div class="alert alert-primary" role="alert" id="alert">Data User berhasil ditambahkan!</div>';
+                if (isset($_GET['success-insert'])) {
+                    echo '<div class="alert alert-primary" role="alert" id="alert">Data Petugas berhasil ditambahkan!</div>';
+                } elseif (isset($_GET['success-restore'])) {
+                    echo '<div class="alert alert-warning" role="alert" id="alert">Data Petugas berhasil dipulihkan!</div>';
                 }
                 ?>
 
@@ -62,7 +62,7 @@
                                                     <i class='fas fa-info-circle'></i> 
                                                 </button>
                                             </a>    
-                                            <button type='button' class='btn btn-sm btn-danger' title='Resign' 
+                                            <button type='button' class='btn btn-danger btn-sm' title='Resign' 
                                                 data-bs-toggle='modal' data-bs-target='#resignModal' 
                                                 onclick='setResignId(" . $row['id_member'] . ")'>
                                                 <i class='fas fa-user-slash'></i>
@@ -224,7 +224,7 @@
     
         if($ubah){
             echo "<script> 
-                    window.location.href='master-petugas.php?success-resign';
+                    window.location.href='karyawan-resign.php?success-resign';
                 </script>";
         }else{
             echo "<script> 
@@ -233,10 +233,23 @@
                 </script>";
         }
     }
-    
     ?>
 
     <script>
+    document.getElementById('searchInput').addEventListener('input', function() {
+        var filter = this.value.toLowerCase();  
+        var rows = document.querySelectorAll('#userTable tbody tr'); 
+    
+        rows.forEach(function(row) {
+            var name = row.cells[1].textContent.toLowerCase(); 
+            if (name.indexOf(filter) > -1) {
+                row.style.display = ''; 
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+
     function setResignId(id) {
         document.getElementById("id_member").value = id;
     }
@@ -246,7 +259,7 @@
             if (alertElement) {
                 setTimeout(function() {
                     alertElement.style.display = 'none';
-                }, 1500); 
+                }, 3000); 
             }
     };
 
@@ -266,7 +279,6 @@
         });
     </script>
     
-
     <?php include 'footer.php'; ?>
 
     <script src="bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>

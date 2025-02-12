@@ -12,7 +12,7 @@ while ($data = mysqli_fetch_array($tampil)):
 
 <div class="container">
     <div class="card card-body">
-        <h2 class="mb-4">Detail Member</h2>
+        <h2 class="mb-4">Detail Data Petugas</h2>
         <a href="master-petugas.php" class="text-decoration-none text-muted mb-3"><i class="fa fa-arrow-left"></i> Kembali</a>
         <div class="row">   
             <div class="col-md-4 text-center">
