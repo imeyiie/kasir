@@ -188,55 +188,55 @@ $tlp = $store['tlp'];
         var nmMember = "<?php echo isset($_SESSION['nm_member']) ? $_SESSION['nm_member'] : 'Unknown Member'; ?>";  // Ambil nm_member dari session
 
         var header = `
-    <div style="text-align:center; font-family: Arial, sans-serif;">
-        <h2 style="font-size: 28px; font-weight: bold;">Laporan Keuangan</h2>
-        <h3 style="font-size: 20px; font-weight: normal; color: #555;">Periode: <?php echo $bulan_tes[$selectedMonth] . ' ' . $selectedYear; ?></h3>
-        <hr style="border-top: 2px solid #333; width: 80%; margin: 10px auto;">
-        <div style="font-size: 18px; color: #333;">
-            <p>Nama Toko: <?php echo $nama_toko; ?> , Alamat Toko : <?php echo $alamat_toko; ?></p>
-            <p>No. Telp : <?php echo $tlp; ?></p>
-        </div>
-        <hr style="border-top: 1px solid #ddd; width: 80%; margin: 10px auto;">
-        <div style="text-align: right; font-size: 16px; margin-right: 20px;">
-            <p>Dicetak oleh: <?php echo $_SESSION['nm_member']; ?></p>
-        </div>
-    </div>
-`;
+            <div style="text-align:center; font-family: Arial, sans-serif;">
+                <h2 style="font-size: 28px; font-weight: bold;">Laporan Keuangan</h2>
+                <h3 style="font-size: 20px; font-weight: normal; color: #555;">Periode: <?php echo $bulan_tes[$selectedMonth] . ' ' . $selectedYear; ?></h3>
+                <hr style="border-top: 2px solid #333; width: 80%; margin: 10px auto;">
+                <div style="font-size: 18px; color: #333;">
+                    <p>Nama Toko: <?php echo $nama_toko; ?> , Alamat Toko : <?php echo $alamat_toko; ?></p>
+                    <p>No. Telp : <?php echo $tlp; ?></p>
+                </div>
+                <hr style="border-top: 1px solid #ddd; width: 80%; margin: 10px auto;">
+                <div style="text-align: right; font-size: 16px; margin-right: 20px;">
+                    <p>Dicetak oleh: <?php echo $_SESSION['nm_member']; ?></p>
+                </div>
+            </div>
+        `;
 
         var tabel = document.getElementById('tabelTransaksi').outerHTML;
 
         var footer = `
-        <div style="margin-top:30px; text-align:right;">
-            <p>Cimahi, ${tanggalCetak}</p>
-            <p>Mengetahui,</p>
-            <br><br><br>
-            <p>_______________________</p>
-            <p>(Nama Penanggung Jawab)</p>
-        </div>
-    `;
+            <div style="margin-top:30px; text-align:right;">
+                <p>Cimahi, ${tanggalCetak}</p>
+                <p>Mengetahui,</p>
+                <br><br><br>
+                <p>_______________________</p>
+                <p>(Nama Penanggung Jawab)</p>
+            </div>
+        `;
 
         var content = `
-        <html>
-            <head>
-                <title>Cetak Laporan</title>
-                <style>
-                    body { font-family: Arial, sans-serif; }
-                    table { width: 100%; border-collapse: collapse; }
-                    th, td { border: 1px solid black; padding: 8px; text-align: left; }
-                    th { background-color: #f2f2f2; }
-                    @media print {
-                        @page { margin: 20mm; }
-                        body { margin: 0; padding: 10px; }
-                    }
-                </style>
-            </head>
-            <body>
-                ${header}
-                ${tabel}
-                ${footer}
-            </body>
-        </html>
-    `;
+            <html>
+                <head>
+                    <title>Cetak Laporan</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; }
+                        table { width: 100%; border-collapse: collapse; }
+                        th, td { border: 1px solid black; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; }
+                        @media print {
+                            @page { margin: 20mm; }
+                            body { margin: 0; padding: 10px; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${header}
+                    ${tabel}
+                    ${footer}
+                </body>
+            </html>
+        `;
 
         var printWindow = window.open('', '', 'width=900,height=600');
         printWindow.document.open();
