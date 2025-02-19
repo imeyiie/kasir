@@ -1,15 +1,4 @@
-<?php 
-include 'connection.php';
-include 'sidebar.php'; 
-
-$query_toko = "SELECT nama_toko, alamat_toko, tlp FROM toko LIMIT 1";
-$result_toko = $conn->query($query_toko);
-$store = $result_toko->fetch_assoc();
-
-$nama_toko = $store['nama_toko'];
-$alamat_toko = $store['alamat_toko'];
-$tlp = $store['tlp'];
-?>
+<?php include 'connection.php'; include 'sidebar.php'; ?>
 
 <div class="container">
     <div class="card">
@@ -182,22 +171,22 @@ $tlp = $store['tlp'];
                     alert('Stok barang tidak mencukupi!');
                     return;
                 }
-                
+
                 const stokTersedia = data.stok;
-                const jumlahBarang = prompt(`Stok tersedia: ${stokTersedia}. Berapa jumlah yang ingin dibeli?`);
-                
-                if (jumlahBarang <= 0 || jumlahBarang > stokTersedia) {
+                const jumlahBarang = parseInt(prompt(`Stok tersedia: ${stokTersedia}. Berapa jumlah yang ingin dibeli?`));
+
+                if (isNaN(jumlahBarang) || jumlahBarang <= 0 || jumlahBarang > stokTersedia) {
                     alert('Jumlah yang dibeli tidak valid atau melebihi stok tersedia.');
                     return;
                 }
-                
+
                 const barangIndex = keranjang.findIndex(item => item.id === id);
                 if (barangIndex === -1) {
-                    keranjang.push({ id, nama, harga, jumlah: parseInt(jumlahBarang) });
+                    keranjang.push({ id, nama, harga, jumlah: jumlahBarang });
                 } else {
-                    keranjang[barangIndex].jumlah += parseInt(jumlahBarang);
+                    keranjang[barangIndex].jumlah += jumlahBarang;
                 }
-                
+
                 updateKeranjangTable();
             })
             .catch(error => {
@@ -291,24 +280,23 @@ $tlp = $store['tlp'];
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                console.log('Transaksi berhasil disimpan!');
-                
+                alert('Transaksi berhasil disimpan!');
                 keranjang.forEach(item => {
                     fetch(`check-stok.php?id_barang=${item.id}`)
                         .then(response => response.json())
                         .then(data => {
                             if (data.stok === 0) {
-                                console.log(`Stok barang ${item.nama} habis!`);
+                                alert(`Stok barang ${item.nama} habis!`);
                             }
                         });
                 });
             } else {
-                console.log('Gagal menyimpan transaksi!');
+                alert('Gagal menyimpan transaksi!');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            console.log('Terjadi kesalahan saat menyimpan transaksi.');
+            alert('Terjadi kesalahan saat menyimpan transaksi.');
         });
     }
 
@@ -331,8 +319,6 @@ $tlp = $store['tlp'];
                 <head><title>Transaksi Print</title></head>
                 <body style="font-family: 'Courier New', Courier, monospace; font-size: 14px; text-align: center; padding: 20px;">
                     <h2>STRUK PENJUALAN</h2>
-                    <p><?php echo $nama_toko; ?> , <?php echo $alamat_toko; ?></p>
-                    <p>No. Telp : <?php echo $tlp; ?></p>
                     <p><strong>Tanggal:</strong> ${new Date().toLocaleDateString('id-ID', {
                         day: '2-digit',
                         month: 'long',
