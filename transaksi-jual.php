@@ -6,6 +6,29 @@
             <h2 class="mb-4">Keranjang Penjualan</h2>
 
             <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="nama">Nama</label>
+                        <input type="text" id="nama" class="form-control" placeholder="Masukkan Nama">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="nomor-telepon">Nomor Telepon</label>
+                        <input type="text" id="nomor-telepon" class="form-control" placeholder="Masukkan Nomor Telepon">
+                    </div>
+                </div>
+                <div class="col-md-14 mt-3">
+                    <div class="form-group">
+                        <label for="alamat">Alamat</label>
+                        <input type="text" id="alamat" class="form-control" placeholder="Masukkan Alamat">
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+            
+            <div class="row mb-3">
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="search-barang">Cari Barang</label>
@@ -34,67 +57,69 @@
                         </table>
                     </div>
                 </div>
-
-                <div class="row">
-                    <div class="col-12">
-                        <h6>KASIR</h6>
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <div id="tanggal-sekarang">Tanggal: <strong></strong></div>
-                            <button class="btn btn-danger btn-sm" id="reset-keranjang">RESET KERANJANG</button>
-                        </div>
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Nama Barang</th>
-                                    <th>Jumlah</th>
-                                    <th>Total</th>
-                                    <th>Kasir</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="keranjang-barang">
-                                <tr>
-                                    <td colspan="6" class="text-center">Keranjang kosong</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="row mt-4">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="total-semua">Total Semua</label>
-                            <input type="text" id="total-semua" class="form-control" value="0" readonly>
-                        </div>
-                        <hr class="mt-2 mb-3">
-                        <div class="form-group">
-                            <label for="kembali">Kembali</label>
-                            <div class="d-flex">
-                                <input type="text" id="kembali" class="form-control" readonly>
-                                <button class="btn btn-secondary ms-2" style="font-size: 14px;">
-                                    <i class="fas fa-print"></i> Print
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="bayar">Bayar</label>
-                            <div class="d-flex">
-                                <input type="text" id="bayar" class="form-control" placeholder="Masukkan jumlah bayar">
-                                <button class="btn btn-success ms-2" id="btn-bayar">Bayar</button>
-                            </div>
-                        </div>
-                        <hr class="mt-2 mb-3">
-                    </div>
-                </div>    
             </div>
 
+            <!-- Bagian Keranjang -->
+            <div class="row">
+                <div class="col-12">
+                    <h6>KASIR</h6>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div id="tanggal-sekarang">Tanggal: <strong></strong></div>
+                        <button class="btn btn-danger btn-sm" id="reset-keranjang">RESET KERANJANG</button>
+                    </div>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama Barang</th>
+                                <th>Jumlah</th>
+                                <th>Total</th>
+                                <th>Kasir</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="keranjang-barang">
+                            <tr>
+                                <td colspan="6" class="text-center">Keranjang kosong</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Bagian Pembayaran -->
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="total-semua">Total Semua</label>
+                        <input type="text" id="total-semua" class="form-control" value="0" readonly>
+                    </div>
+                    <hr class="mt-2 mb-3">
+                    <div class="form-group">
+                        <label for="kembali">Kembali</label>
+                        <div class="d-flex">
+                            <input type="text" id="kembali" class="form-control" readonly>
+                            <button class="btn btn-secondary ms-2" style="font-size: 14px;">
+                                <i class="fas fa-print"></i> Print
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="bayar">Bayar</label>
+                        <div class="d-flex">
+                            <input type="text" id="bayar" class="form-control" placeholder="Masukkan jumlah bayar">
+                            <button class="btn btn-success ms-2" id="btn-bayar">Bayar</button>
+                        </div>
+                    </div>
+                    <hr class="mt-2 mb-3">
+                </div>
+            </div>    
         </div>
     </div>
 </div>
+
 
 <script>
     const nmMember = "<?= $_SESSION['nm_member']; ?>";
@@ -112,7 +137,7 @@
                 return;
             }
             cariBarang(keyword);
-        }
+        }   
     });
 
     searchInput.addEventListener('input', function () {
