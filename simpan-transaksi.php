@@ -20,7 +20,7 @@ $keranjang = $data['keranjang'];
 $total = $data['total'];
 $bayar = $data['bayar'];
 $kembalian = $data['kembalian'];
-$tanggal = $data['tanggal'];
+$tanggal = date('Y-m-d H:i:s', strtotime($data['tanggal']));
 
 $conn->begin_transaction();
 
