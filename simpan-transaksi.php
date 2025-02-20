@@ -2,9 +2,7 @@
 include 'connection.php';
 session_start();
 
-if (isset($_SESSION['id_member'])) {
-    $id_member = $_SESSION['id_member'];
-} else {
+if (!isset($_SESSION['id_member'])) {
     echo json_encode(['status' => 'error', 'message' => 'Anda harus login untuk melakukan transaksi']);
     exit;
 }
@@ -16,21 +14,28 @@ if (!$data) {
     exit;
 }
 
+$nama = $data['nama'];
+$nomor_telepon = $data['nomor_telepon'];
+$alamat = $data['alamat'];
 $keranjang = $data['keranjang'];
 $total = $data['total'];
 $bayar = $data['bayar'];
 $kembalian = $data['kembalian'];
 $tanggal = date('Y-m-d H:i:s', strtotime($data['tanggal']));
+$id_member = $_SESSION['id_member'];
 
 $conn->begin_transaction();
 
 try {
+    $stmt_pelanggan = $conn->prepare("INSERT INTO pelanggan (nama_pelanggan, no_telepon, alamat_pelanggan) VALUES (?, ?, ?)");
+    $stmt_pelanggan->bind_param('sss', $nama, $nomor_telepon, $alamat);
+    $stmt_pelanggan->execute();
+    $id_pelanggan = $stmt_pelanggan->insert_id;
+
     $stmt_check_stok = $conn->prepare("SELECT stok FROM barang WHERE id_barang = ?");
     $stmt_update_stok = $conn->prepare("UPDATE barang SET stok = ? WHERE id_barang = ?");
-    $stmt_penjualan = $conn->prepare("INSERT INTO penjualan (id_barang, id_member, jumlah, total, tanggal_input)
-                                      VALUES (?, ?, ?, ?, ?)");
-    $stmt_nota = $conn->prepare("INSERT INTO nota (id_barang, id_member, jumlah, total, tanggal_input)
-                                 VALUES (?, ?, ?, ?, ?)");
+    $stmt_penjualan = $conn->prepare("INSERT INTO penjualan (id_pelanggan, id_barang, id_member, jumlah, total, tanggal_input) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt_nota = $conn->prepare("INSERT INTO nota (id_pelanggan, id_barang, id_member, jumlah, total, tanggal_input) VALUES (?, ?, ?, ?, ?, ?)");
 
     foreach ($keranjang as $barang) {
         $id_barang = $barang['id'];
@@ -55,10 +60,10 @@ try {
             $stmt_update_stok->execute();
         }
 
-        $stmt_penjualan->bind_param('siids', $id_barang, $id_member, $jumlah, $total_harga, $tanggal);
+        $stmt_penjualan->bind_param('isiids', $id_pelanggan, $id_barang, $id_member, $jumlah, $total_harga, $tanggal);
         $stmt_penjualan->execute();
 
-        $stmt_nota->bind_param('siids', $id_barang, $id_member, $jumlah, $total_harga, $tanggal);
+        $stmt_nota->bind_param('isiids', $id_pelanggan, $id_barang, $id_member, $jumlah, $total_harga, $tanggal);
         $stmt_nota->execute();
     }
 

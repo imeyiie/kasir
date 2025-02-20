@@ -365,13 +365,23 @@ $tlp = $store['tlp'];
     });
 
     function simpanKeDatabase(total, bayar, kembalian) {
+        let nama = document.getElementById('nama').value;
+        let nomor_telepon = document.getElementById('nomor-telepon').value;
+        let alamat = document.getElementById('alamat').value;
+
         fetch('simpan-transaksi.php', {
             method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify({
+                nama: nama,
+                nomor_telepon: nomor_telepon,
+                alamat: alamat,
                 total: total,
                 bayar: bayar,
                 kembalian: kembalian,
-                keranjang: keranjang, 
+                keranjang: keranjang,
                 tanggal: new Date().toISOString()
             })
         })
@@ -379,23 +389,12 @@ $tlp = $store['tlp'];
         .then(data => {
             if (data.status === 'success') {
                 console.log('Transaksi berhasil disimpan!');
-                
-                keranjang.forEach(item => {
-                    fetch(`check-stok.php?id_barang=${item.id}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.stok === 0) {
-                                console.log(`Stok barang ${item.nama} habis!`);
-                            }
-                        });
-                });
             } else {
-                console.log('Gagal menyimpan transaksi!');
+                console.log('Gagal menyimpan transaksi!', data.message);
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            console.log('Terjadi kesalahan saat menyimpan transaksi.');
         });
     }
 
