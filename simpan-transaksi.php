@@ -21,34 +21,16 @@ $total = $data['total'];
 $bayar = $data['bayar'];
 $kembalian = $data['kembalian'];
 $tanggal = date('Y-m-d H:i:s', strtotime($data['tanggal']));
-$nama = $data['nama']; 
-$nomor_telepon = $data['nomor_telepon'];
-$alamat = $data['alamat'];  
 
 $conn->begin_transaction();
 
 try {
-    $stmt_check_pelanggan = $conn->prepare("SELECT id_pelanggan FROM pelanggan WHERE no_telepon = ?");
-    $stmt_check_pelanggan->bind_param('s', $nomor_telepon);
-    $stmt_check_pelanggan->execute();
-    $result = $stmt_check_pelanggan->get_result();
-
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $id_pelanggan = $row['id_pelanggan'];
-    } else {
-        $stmt_insert_pelanggan = $conn->prepare("INSERT INTO pelanggan (nama_pelanggan, no_telepon, alamat_pelanggan) VALUES (?, ?, ?)");
-        $stmt_insert_pelanggan->bind_param('sss', $nama, $nomor_telepon, $alamat);
-        $stmt_insert_pelanggan->execute();
-        $id_pelanggan = $conn->insert_id; 
-    }
-
     $stmt_check_stok = $conn->prepare("SELECT stok FROM barang WHERE id_barang = ?");
     $stmt_update_stok = $conn->prepare("UPDATE barang SET stok = ? WHERE id_barang = ?");
-    $stmt_penjualan = $conn->prepare("INSERT INTO penjualan (id_pelanggan, id_barang, id_member, jumlah, total, tanggal_input)
-                                      VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt_nota = $conn->prepare("INSERT INTO nota (id_pelanggan, id_barang, id_member, jumlah, total, tanggal_input)
-                                 VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt_penjualan = $conn->prepare("INSERT INTO penjualan (id_barang, id_member, jumlah, total, tanggal_input)
+                                      VALUES (?, ?, ?, ?, ?)");
+    $stmt_nota = $conn->prepare("INSERT INTO nota (id_barang, id_member, jumlah, total, tanggal_input)
+                                 VALUES (?, ?, ?, ?, ?)");
 
     foreach ($keranjang as $barang) {
         $id_barang = $barang['id'];
@@ -73,11 +55,10 @@ try {
             $stmt_update_stok->execute();
         }
 
-        // Insert into penjualan and nota tables
-        $stmt_penjualan->bind_param('iiidsd', $id_pelanggan, $id_barang, $id_member, $jumlah, $total_harga, $tanggal);
+        $stmt_penjualan->bind_param('siids', $id_barang, $id_member, $jumlah, $total_harga, $tanggal);
         $stmt_penjualan->execute();
 
-        $stmt_nota->bind_param('iiidsd', $id_pelanggan, $id_barang, $id_member, $jumlah, $total_harga, $tanggal);
+        $stmt_nota->bind_param('siids', $id_barang, $id_member, $jumlah, $total_harga, $tanggal);
         $stmt_nota->execute();
     }
 

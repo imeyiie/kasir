@@ -1,4 +1,15 @@
-<?php include 'connection.php'; include 'sidebar.php'; ?>
+<?php 
+include 'connection.php';
+include 'sidebar.php'; 
+
+$query_toko = "SELECT nama_toko, alamat_toko, tlp FROM toko LIMIT 1";
+$result_toko = $conn->query($query_toko);
+$store = $result_toko->fetch_assoc();
+
+$nama_toko = $store['nama_toko'];
+$alamat_toko = $store['alamat_toko'];
+$tlp = $store['tlp'];
+?>
 
 <div class="container">
     <div class="card">
@@ -27,7 +38,7 @@
             </div>
 
             <hr>
-            
+
             <div class="row mb-3">
                 <div class="col-md-4">
                     <div class="form-group">
@@ -57,69 +68,68 @@
                         </table>
                     </div>
                 </div>
-            </div>
 
-            <!-- Bagian Keranjang -->
-            <div class="row">
-                <div class="col-12">
-                    <h6>KASIR</h6>
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <div id="tanggal-sekarang">Tanggal: <strong></strong></div>
-                        <button class="btn btn-danger btn-sm" id="reset-keranjang">RESET KERANJANG</button>
+                <div class="row">
+                    <div class="col-12">
+                        <h6>KASIR</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div id="tanggal-sekarang">Tanggal: <strong></strong></div>
+                            <button class="btn btn-danger btn-sm" id="reset-keranjang">RESET KERANJANG</button>
+                        </div>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama Barang</th>
+                                    <th>Jumlah</th>
+                                    <th>Total</th>
+                                    <th>Kasir</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="keranjang-barang">
+                                <tr>
+                                    <td colspan="6" class="text-center">Keranjang kosong</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Nama Barang</th>
-                                <th>Jumlah</th>
-                                <th>Total</th>
-                                <th>Kasir</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="keranjang-barang">
-                            <tr>
-                                <td colspan="6" class="text-center">Keranjang kosong</td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
-            </div>
 
-            <!-- Bagian Pembayaran -->
-            <div class="row mt-4">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="total-semua">Total Semua</label>
-                        <input type="text" id="total-semua" class="form-control" value="0" readonly>
-                    </div>
-                    <hr class="mt-2 mb-3">
-                    <div class="form-group">
-                        <label for="kembali">Kembali</label>
-                        <div class="d-flex">
-                            <input type="text" id="kembali" class="form-control" readonly>
-                            <button class="btn btn-secondary ms-2" style="font-size: 14px;">
-                                <i class="fas fa-print"></i> Print
-                            </button>
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="total-semua">Total Semua</label>
+                            <input type="text" id="total-semua" class="form-control" value="0" readonly>
+                        </div>
+                        <hr class="mt-2 mb-3">
+                        <div class="form-group">
+                            <label for="kembali">Kembali</label>
+                            <div class="d-flex">
+                                <input type="text" id="kembali" class="form-control" readonly>
+                                <button class="btn btn-secondary ms-2" style="font-size: 14px;">
+                                    <i class="fas fa-print"></i> Print
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="bayar">Bayar</label>
-                        <div class="d-flex">
-                            <input type="text" id="bayar" class="form-control" placeholder="Masukkan jumlah bayar">
-                            <button class="btn btn-success ms-2" id="btn-bayar">Bayar</button>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="bayar">Bayar</label>
+                            <div class="d-flex">
+                                <input type="text" id="bayar" class="form-control" placeholder="Masukkan jumlah bayar">
+                                <button class="btn btn-success ms-2" id="btn-bayar">Bayar</button>
+                            </div>
+                            <p id="teks-bayar" class="mt-2"></p>
                         </div>
+                        <hr class="mt-2 mb-3">
                     </div>
-                    <hr class="mt-2 mb-3">
-                </div>
-            </div>    
+                </div>    
+            </div>
+
         </div>
     </div>
 </div>
-
 
 <script>
     const nmMember = "<?= $_SESSION['nm_member']; ?>";
@@ -137,7 +147,7 @@
                 return;
             }
             cariBarang(keyword);
-        }   
+        }
     });
 
     searchInput.addEventListener('input', function () {
@@ -196,22 +206,22 @@
                     alert('Stok barang tidak mencukupi!');
                     return;
                 }
-
+                
                 const stokTersedia = data.stok;
-                const jumlahBarang = parseInt(prompt(`Stok tersedia: ${stokTersedia}. Berapa jumlah yang ingin dibeli?`));
-
-                if (isNaN(jumlahBarang) || jumlahBarang <= 0 || jumlahBarang > stokTersedia) {
+                const jumlahBarang = prompt(`Stok tersedia: ${stokTersedia}. Berapa jumlah yang ingin dibeli?`);
+                
+                if (jumlahBarang <= 0 || jumlahBarang > stokTersedia) {
                     alert('Jumlah yang dibeli tidak valid atau melebihi stok tersedia.');
                     return;
                 }
-
+                
                 const barangIndex = keranjang.findIndex(item => item.id === id);
                 if (barangIndex === -1) {
-                    keranjang.push({ id, nama, harga, jumlah: jumlahBarang });
+                    keranjang.push({ id, nama, harga, jumlah: parseInt(jumlahBarang) });
                 } else {
-                    keranjang[barangIndex].jumlah += jumlahBarang;
+                    keranjang[barangIndex].jumlah += parseInt(jumlahBarang);
                 }
-
+                
                 updateKeranjangTable();
             })
             .catch(error => {
@@ -262,17 +272,75 @@
     });
 
     const bayarInput = document.getElementById('bayar');
+    const teksBayar = document.getElementById('teks-bayar');
     const kembaliInput = document.getElementById('kembali');
     const btnBayar = document.getElementById('btn-bayar');
+
+    bayarInput.addEventListener('input', function () {
+        const jumlahBayar = parseInt(bayarInput.value.replace(/\D/g, ''), 10);
+        
+        if (!isNaN(jumlahBayar)) {
+            teksBayar.textContent = formatUangKeTeks(jumlahBayar);
+        } else {
+            teksBayar.textContent = '';
+        }
+    });
+
+
+    function angkaKeTeks(angka) {
+        const satuan = ["", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan"];
+        const belasan = ["", "sebelas", "dua belas", "tiga belas", "empat belas", "lima belas", "enam belas", "tujuh belas", "delapan belas", "sembilan belas"];
+        const puluhan = ["", "", "dua puluh", "tiga puluh", "empat puluh", "lima puluh", "enam puluh", "tujuh puluh", "delapan puluh", "sembilan puluh"];
+        const ribuan = ["", "ribu", "juta", "miliar", "triliun"];
+
+        if (angka === 0) return "nol rupiah";
+
+        let teks = "";
+        let level = 0;
+
+        while (angka > 0) {
+            let bagian = angka % 1000;
+            if (bagian > 0) {
+                let tempTeks = "";
+                
+                if (bagian >= 100) {
+                    if (Math.floor(bagian / 100) === 1 && bagian % 100 === 0) {
+                        tempTeks += "seratus ";  // Untuk angka seperti 100, 200, dst
+                    } else {
+                        tempTeks += satuan[Math.floor(bagian / 100)] + " ratus ";  // Untuk selain 100
+                    }
+                    bagian %= 100;
+                }
+                
+                if (bagian >= 20) {
+                    tempTeks += puluhan[Math.floor(bagian / 10)] + " ";
+                    bagian %= 10;
+                }
+                
+                if (bagian > 10 && bagian < 20) {
+                    tempTeks += belasan[bagian - 10] + " ";
+                } else if (bagian > 0) {
+                    tempTeks += satuan[bagian] + " ";
+                }
+
+                teks = tempTeks.trim() + " " + ribuan[level] + " " + teks;
+            }
+
+            angka = Math.floor(angka / 1000);
+            level++;
+        }
+
+        return teks.trim() + " rupiah";
+    }
+
+    function formatUangKeTeks(angka) {
+        return angkaKeTeks(angka);
+    }
+
 
     btnBayar.addEventListener('click', () => {
         const totalBelanja = parseInt(document.getElementById('total-semua').value.replace(/\D/g, ''), 10);
         const jumlahBayar = parseInt(bayarInput.value.replace(/\D/g, ''), 10);
-
-        // Ambil nilai dari form pelanggan
-        const nama = document.getElementById('nama').value;
-        const nomorTelepon = document.getElementById('nomor-telepon').value;
-        const alamat = document.getElementById('alamat').value;
 
         if (isNaN(jumlahBayar) || jumlahBayar <= 0) {
             alert('Harap masukkan nominal bayar yang valid.');
@@ -288,48 +356,46 @@
 
         if (kembalian === 0) {
             alert('Transaksi berhasil! Uang pas.');
-            simpanKeDatabase(totalBelanja, jumlahBayar, 0, nama, nomorTelepon, alamat); 
+            simpanKeDatabase(totalBelanja, jumlahBayar, 0); 
         } else {
             kembaliInput.value = `Rp ${kembalian.toLocaleString()}`;
             alert(`Transaksi berhasil! Kembalian: Rp ${kembalian.toLocaleString()}`);
-            simpanKeDatabase(totalBelanja, jumlahBayar, kembalian, nama, nomorTelepon, alamat);
+            simpanKeDatabase(totalBelanja, jumlahBayar, kembalian);
         }
     });
 
-    function simpanKeDatabase(total, bayar, kembalian, nama, nomorTelepon, alamat) {
+    function simpanKeDatabase(total, bayar, kembalian) {
         fetch('simpan-transaksi.php', {
             method: 'POST',
             body: JSON.stringify({
                 total: total,
                 bayar: bayar,
                 kembalian: kembalian,
-                nama: nama,
-                nomor_telepon: nomorTelepon,
-                alamat: alamat,
-                keranjang: keranjang,
+                keranjang: keranjang, 
                 tanggal: new Date().toISOString()
             })
         })
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                alert('Transaksi berhasil disimpan!');
+                console.log('Transaksi berhasil disimpan!');
+                
                 keranjang.forEach(item => {
                     fetch(`check-stok.php?id_barang=${item.id}`)
                         .then(response => response.json())
                         .then(data => {
                             if (data.stok === 0) {
-                                alert(`Stok barang ${item.nama} habis!`);
+                                console.log(`Stok barang ${item.nama} habis!`);
                             }
                         });
                 });
             } else {
-                alert('Gagal menyimpan transaksi!');
+                console.log('Gagal menyimpan transaksi!');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Terjadi kesalahan saat menyimpan transaksi.');
+            console.log('Terjadi kesalahan saat menyimpan transaksi.');
         });
     }
 
@@ -352,6 +418,8 @@
                 <head><title>Transaksi Print</title></head>
                 <body style="font-family: 'Courier New', Courier, monospace; font-size: 14px; text-align: center; padding: 20px;">
                     <h2>STRUK PENJUALAN</h2>
+                    <p><?php echo $nama_toko; ?> , <?php echo $alamat_toko; ?></p>
+                    <p>No. Telp : <?php echo $tlp; ?></p>
                     <p><strong>Tanggal:</strong> ${new Date().toLocaleDateString('id-ID', {
                         day: '2-digit',
                         month: 'long',
@@ -373,5 +441,6 @@
         printWindow.document.close();
         printWindow.print();
     });
+  
 
 </script>
