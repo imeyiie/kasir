@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 12 Feb 2025 pada 08.21
+-- Waktu pembuatan: 20 Feb 2025 pada 10.04
 -- Versi server: 10.4.32-MariaDB
 -- Versi PHP: 8.2.12
 
@@ -47,10 +47,9 @@ CREATE TABLE `barang` (
 --
 
 INSERT INTO `barang` (`id`, `id_barang`, `id_kategori`, `nama_barang`, `merk`, `harga_beli`, `harga_jual`, `satuan_barang`, `stok`, `gambar`, `tgl_input`, `tgl_update`) VALUES
-(13, 'BR001', 1, 'PIXY UVW TWC Perfect Last', 'PIXY', '33200', '36000', 'PCS', '103', 'TWC.png', '2025-02-04 19:09:22', '2025-02-12 13:52:33'),
-(14, 'BR002', 12, 'Superstay Teddy Tint', 'Maybelline', '93500', '97122', 'PCS', '176', 'download.jpg', '2025-02-04 19:11:34', '2025-02-12 13:56:03'),
-(15, 'BR003', 14, 'Dazzle Me Supore-Fine Skin Makeup Primer', 'Dazzle Me', '37500', '49900', 'PCS', '239', '1739343347_dazz.png', '2025-02-12 13:55:07', NULL),
-(16, 'BR004', 15, 'PinkFlash Pro Touch Pencil Eyeliner', 'PinkFlash ', '31200', '38000', 'PCS', '114', '1739343593_PINK.png', '2025-02-12 13:58:29', '2025-02-12 14:01:13');
+(13, 'BR001', 1, 'PIXY UVW TWC Perfect Last', 'PIXY', '33200', '36000', 'PCS', '79', 'TWC.png', '2025-02-04 19:09:22', '2025-02-12 13:52:33'),
+(14, 'BR002', 12, 'Superstay Teddy Tint', 'Maybelline', '93500', '97122', 'PCS', '175', 'download.jpg', '2025-02-04 19:11:34', '2025-02-12 13:56:03'),
+(15, 'BR003', 14, 'Dazzle Me Supore-Fine Skin Makeup Primer', 'Dazzle Me', '37500', '49900', 'PCS', '234', '1739343347_dazz.png', '2025-02-12 13:55:07', NULL);
 
 -- --------------------------------------------------------
 
@@ -123,7 +122,7 @@ CREATE TABLE `member` (
 INSERT INTO `member` (`id_member`, `id_role`, `nm_member`, `jenis_kelamin`, `alamat_member`, `telepon`, `email`, `gambar`, `NIK`, `tgl_masuk`, `tgl_keluar`) VALUES
 (1, 1, 'Dal Mi', 'perempuan', 'Oakvalley 1-gil, Jijeong-myeon, Wonju, Provinsi Gangwon.', '+82 123456789', 'example@gmail.com', 'unnamed.jpg', '12314121', '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
 (6, 2, 'Lee Ji-eun', 'perempuan', 'Eunhang-ro, Wansan-gu, kota Jeonju ', ' +82-2-312-3456', 'example@gmail.com', '1739323557.jpg', '800815', '2025-02-12 10:24:07', '0000-00-00 00:00:00'),
-(7, 2, ' Kim Soo Hyun', 'laki-laki', '109-128 Chilbong-ro, Hojeo-myeon, Wonju-si, Gangwon-do', ' +82-2-312-3456', 'example@gmail.com', '1739325123_soomen.jpg', '800815', '2025-02-12 14:03:21', '0000-00-00 00:00:00');
+(7, 2, ' Kim Soo Hyun', 'laki-laki', '109-128 Chilbong-ro, Hojeo-myeon, Wonju-si, Gangwon-do', ' +82-2-312-3456', 'example@gmail.com', '1739325123_soomen.jpg', '800815', '2025-02-20 14:42:52', '2025-02-20 14:42:55');
 
 -- --------------------------------------------------------
 
@@ -133,25 +132,48 @@ INSERT INTO `member` (`id_member`, `id_role`, `nm_member`, `jenis_kelamin`, `ala
 
 CREATE TABLE `nota` (
   `id_nota` int(11) NOT NULL,
+  `id_pelanggan` int(11) NOT NULL,
   `id_barang` varchar(255) NOT NULL,
   `id_member` int(11) NOT NULL,
   `jumlah` varchar(255) NOT NULL,
   `total` varchar(255) NOT NULL,
-  `tanggal_input` varchar(255) NOT NULL,
-  `periode` varchar(255) DEFAULT NULL
+  `tanggal_input` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data untuk tabel `nota`
 --
 
-INSERT INTO `nota` (`id_nota`, `id_barang`, `id_member`, `jumlah`, `total`, `tanggal_input`, `periode`) VALUES
-(1, 'BR001', 1, '1', '36000', '2025-02-12T00:39:23.101Z', NULL),
-(2, 'BR002', 1, '1', '97122', '2025-02-12T00:59:24.365Z', NULL),
-(3, 'BR001', 1, '1', '36000', '2025-02-12T01:13:05.486Z', NULL),
-(4, 'BR001', 1, '1', '36000', '2025-02-12T01:16:04.461Z', NULL),
-(5, 'BR002', 1, '1', '97122', '2025-02-12T01:16:04.461Z', NULL),
-(6, 'BR001', 1, '1', '36000', '2025-02-12T02:35:52.687Z', NULL);
+INSERT INTO `nota` (`id_nota`, `id_pelanggan`, `id_barang`, `id_member`, `jumlah`, `total`, `tanggal_input`) VALUES
+(35, 21, 'BR001', 1, '1', '36000', '2025-02-20 04:58:24'),
+(36, 22, 'BR001', 1, '1', '36000', '2025-02-20 05:26:52'),
+(37, 22, 'BR005', 1, '2', '54000', '2025-02-20 05:26:52'),
+(38, 23, 'BR001', 1, '1', '36000', '2025-02-20 07:43:44'),
+(39, 24, 'BR001', 7, '1', '36000', '2025-02-20 08:35:37'),
+(40, 24, 'BR003', 7, '2', '99800', '2025-02-20 08:35:37');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `pelanggan`
+--
+
+CREATE TABLE `pelanggan` (
+  `id_pelanggan` int(11) NOT NULL,
+  `nama_pelanggan` varchar(225) NOT NULL,
+  `no_telepon` varchar(15) NOT NULL,
+  `alamat_pelanggan` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `pelanggan`
+--
+
+INSERT INTO `pelanggan` (`id_pelanggan`, `nama_pelanggan`, `no_telepon`, `alamat_pelanggan`) VALUES
+(21, 'melanda', '089', 'padasuka'),
+(22, 'mahes', '081322345246', 'puri'),
+(23, 'melanda dali', '081322345246', 'Padasuka'),
+(24, 'Melanda Dali ', '089520535338', 'Padasuka');
 
 -- --------------------------------------------------------
 
@@ -161,6 +183,7 @@ INSERT INTO `nota` (`id_nota`, `id_barang`, `id_member`, `jumlah`, `total`, `tan
 
 CREATE TABLE `penjualan` (
   `id_penjualan` int(11) NOT NULL,
+  `id_pelanggan` int(11) NOT NULL,
   `id_barang` varchar(255) NOT NULL,
   `id_member` int(11) NOT NULL,
   `jumlah` varchar(255) NOT NULL,
@@ -172,13 +195,13 @@ CREATE TABLE `penjualan` (
 -- Dumping data untuk tabel `penjualan`
 --
 
-INSERT INTO `penjualan` (`id_penjualan`, `id_barang`, `id_member`, `jumlah`, `total`, `tanggal_input`) VALUES
-(1, 'BR001', 1, '1', '36000', '2025-02-12T00:39:23.101Z'),
-(2, 'BR002', 1, '1', '97122', '2025-02-12T00:59:24.365Z'),
-(3, 'BR001', 1, '1', '36000', '2025-02-12T01:13:05.486Z'),
-(4, 'BR001', 1, '1', '36000', '2025-02-12T01:16:04.461Z'),
-(5, 'BR002', 1, '1', '97122', '2025-02-12T01:16:04.461Z'),
-(6, 'BR001', 1, '1', '36000', '2025-02-12T02:35:52.687Z');
+INSERT INTO `penjualan` (`id_penjualan`, `id_pelanggan`, `id_barang`, `id_member`, `jumlah`, `total`, `tanggal_input`) VALUES
+(35, 21, 'BR001', 1, '1', '36000', '2025-02-20 04:58:24'),
+(36, 22, 'BR001', 1, '1', '36000', '2025-02-20 05:26:52'),
+(37, 22, 'BR005', 1, '2', '54000', '2025-02-20 05:26:52'),
+(38, 23, 'BR001', 1, '1', '36000', '2025-02-20 07:43:44'),
+(39, 24, 'BR001', 7, '1', '36000', '2025-02-20 08:35:37'),
+(40, 24, 'BR003', 7, '2', '99800', '2025-02-20 08:35:37');
 
 -- --------------------------------------------------------
 
@@ -255,6 +278,12 @@ ALTER TABLE `nota`
   ADD PRIMARY KEY (`id_nota`);
 
 --
+-- Indeks untuk tabel `pelanggan`
+--
+ALTER TABLE `pelanggan`
+  ADD PRIMARY KEY (`id_pelanggan`);
+
+--
 -- Indeks untuk tabel `penjualan`
 --
 ALTER TABLE `penjualan`
@@ -280,13 +309,13 @@ ALTER TABLE `toko`
 -- AUTO_INCREMENT untuk tabel `barang`
 --
 ALTER TABLE `barang`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT untuk tabel `kategori`
 --
 ALTER TABLE `kategori`
-  MODIFY `id_kategori` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id_kategori` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT untuk tabel `login`
@@ -304,13 +333,19 @@ ALTER TABLE `member`
 -- AUTO_INCREMENT untuk tabel `nota`
 --
 ALTER TABLE `nota`
-  MODIFY `id_nota` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_nota` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+
+--
+-- AUTO_INCREMENT untuk tabel `pelanggan`
+--
+ALTER TABLE `pelanggan`
+  MODIFY `id_pelanggan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT untuk tabel `penjualan`
 --
 ALTER TABLE `penjualan`
-  MODIFY `id_penjualan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_penjualan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT untuk tabel `role`

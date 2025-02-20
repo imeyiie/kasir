@@ -1,5 +1,4 @@
 <?php include 'sidebar.php';
-include 'footer.php';
 include 'connection.php'; ?>
 
 <div class="container">
@@ -83,6 +82,53 @@ include 'connection.php'; ?>
         </div>
 
     </div>
-</div>
+</div>++++++++
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <?php include "footer.php" ?>
