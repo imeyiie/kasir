@@ -269,6 +269,11 @@
         const totalBelanja = parseInt(document.getElementById('total-semua').value.replace(/\D/g, ''), 10);
         const jumlahBayar = parseInt(bayarInput.value.replace(/\D/g, ''), 10);
 
+        // Ambil nilai dari form pelanggan
+        const nama = document.getElementById('nama').value;
+        const nomorTelepon = document.getElementById('nomor-telepon').value;
+        const alamat = document.getElementById('alamat').value;
+
         if (isNaN(jumlahBayar) || jumlahBayar <= 0) {
             alert('Harap masukkan nominal bayar yang valid.');
             return;
@@ -283,22 +288,25 @@
 
         if (kembalian === 0) {
             alert('Transaksi berhasil! Uang pas.');
-            simpanKeDatabase(totalBelanja, jumlahBayar, 0); 
+            simpanKeDatabase(totalBelanja, jumlahBayar, 0, nama, nomorTelepon, alamat); 
         } else {
             kembaliInput.value = `Rp ${kembalian.toLocaleString()}`;
             alert(`Transaksi berhasil! Kembalian: Rp ${kembalian.toLocaleString()}`);
-            simpanKeDatabase(totalBelanja, jumlahBayar, kembalian);
+            simpanKeDatabase(totalBelanja, jumlahBayar, kembalian, nama, nomorTelepon, alamat);
         }
     });
 
-    function simpanKeDatabase(total, bayar, kembalian) {
+    function simpanKeDatabase(total, bayar, kembalian, nama, nomorTelepon, alamat) {
         fetch('simpan-transaksi.php', {
             method: 'POST',
             body: JSON.stringify({
                 total: total,
                 bayar: bayar,
                 kembalian: kembalian,
-                keranjang: keranjang, 
+                nama: nama,
+                nomor_telepon: nomorTelepon,
+                alamat: alamat,
+                keranjang: keranjang,
                 tanggal: new Date().toISOString()
             })
         })
