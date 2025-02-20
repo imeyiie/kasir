@@ -23,16 +23,20 @@ $kategoriResult = $conn->query($kategoriSql);
             ?>
 
             <form id="kategoriForm" action="" method="POST">
-                <input type="hidden" id="id_kategori" name="id_kategori">
-                <div class="mb-3 d-flex">
-                    <input type="text" class="form-control form-control-md me-2" id="nama_kategori" name="nama_kategori" placeholder="Masukkan Kategori Barang Baru" style="width: 350px;" required>
-                    <button type="submit" id="actionButton" name="action" value="insert" class="btn btn-primary btn-md me-2">+ Tambah Data</button>
-                    <button type="button" class="btn btn-success btn-md" onclick="refreshPage()">Refresh</button>
-                </div>
+                <div class="d-flex justify-content-between mb-3">
+                    <input type="hidden" id="id_kategori" name="id_kategori">
+                    <div class=" d-flex">
+                        <input type="text" class="form-control form-control-md me-2" id="nama_kategori" name="nama_kategori" placeholder="Masukkan Kategori Barang Baru" style="width: 350px;" required>
+                        <button type="submit" id="actionButton" name="action" value="insert" class="btn btn-primary btn-md me-2">+ Tambah Data</button>
+                        <button type="button" class="btn btn-success btn-md" onclick="refreshPage()">Refresh</button>
+                    </div>
+
+                    <input type="text" id="searchInput" class="form-control w-25" placeholder="Cari Kategori...">
+                </div>    
             </form>
 
             <div class="table-responsive">
-                <table class="table table-striped table-bordered">
+                <table class="table table-striped table-bordered"  id="kategoriTable">
                     <thead class="table-primary">
                         <tr>
                             <th>No.</th>
@@ -124,6 +128,22 @@ ob_end_flush();
 ?>
 
 <script>
+
+    searchInput.addEventListener("keyup", function() {
+        let filter = searchInput.value.toLowerCase();
+        let rows = document.querySelectorAll("#kategoriTable tbody tr");
+
+        rows.forEach(row => {
+            let namaKategori = row.cells[1].textContent.toLowerCase();
+
+            if (namaKategori.includes(filter)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    });
+
     function setDeleteId(id) {
         document.getElementById('id_delete').value = id;
     }
