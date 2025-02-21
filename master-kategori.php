@@ -3,8 +3,21 @@ ob_start();
 include 'connection.php';
 include 'sidebar.php';
 
-$kategoriSql = "SELECT id_kategori, nama_kategori FROM kategori";
-$kategoriResult = $conn->query($kategoriSql);
+$perPage = 10; 
+
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $perPage;
+
+$sql = "SELECT id_kategori, nama_kategori FROM kategori LIMIT $perPage OFFSET $offset";
+$result = $conn->query($sql);
+
+$sqlCount = "SELECT COUNT(*) AS total FROM kategori";
+$resultCount = $conn->query($sqlCount);
+$rowCount = $resultCount->fetch_assoc();
+$totalRows = $rowCount['total'];
+
+$totalPages = ceil($totalRows / $perPage);
+
 ?>
 
 <div class="container">
@@ -25,7 +38,7 @@ $kategoriResult = $conn->query($kategoriSql);
             <form id="kategoriForm" action="" method="POST">
                 <div class="d-flex justify-content-between mb-3">
                     <input type="hidden" id="id_kategori" name="id_kategori">
-                    <div class=" d-flex">
+                    <div class="d-flex">
                         <input type="text" class="form-control form-control-md me-2" id="nama_kategori" name="nama_kategori" placeholder="Masukkan Kategori Barang Baru" style="width: 350px;" required>
                         <button type="submit" id="actionButton" name="action" value="insert" class="btn btn-primary btn-md me-2">+ Tambah Data</button>
                         <button type="button" class="btn btn-success btn-md" onclick="refreshPage()">Refresh</button>
@@ -36,7 +49,7 @@ $kategoriResult = $conn->query($kategoriSql);
             </form>
 
             <div class="table-responsive">
-                <table class="table table-striped table-bordered"  id="kategoriTable">
+                <table class="table table-striped table-bordered" id="kategoriTable">
                     <thead class="table-primary">
                         <tr>
                             <th>No.</th>
@@ -46,9 +59,9 @@ $kategoriResult = $conn->query($kategoriSql);
                     </thead>
                     <tbody>
                         <?php
-                        if ($kategoriResult->num_rows > 0) {
+                        if ($result->num_rows > 0) {
                             $no = 1;
-                            while ($kategori = $kategoriResult->fetch_assoc()) {
+                            while ($kategori = $result->fetch_assoc()) {
                                 echo "<tr>";
                                 echo "<td>" . $no++ . "</td>";
                                 echo "<td>" . $kategori['nama_kategori'] . "</td>";
@@ -69,6 +82,33 @@ $kategoriResult = $conn->query($kategoriSql);
                     </tbody>
                 </table>
             </div>
+
+            <div class="d-flex mt-3 pagination-container">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        <li class="page-item <?= ($page == 1) ? 'disabled' : ''; ?>">
+                            <a class="page-link" href="?page=1">First</a>
+                        </li>
+                        <li class="page-item <?= ($page == 1) ? 'disabled' : ''; ?>">
+                            <a class="page-link" href="?page=<?= $page - 1; ?>">Previous</a>
+                        </li>
+
+                        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                            <li class="page-item <?= ($page == $i) ? 'active' : ''; ?>">
+                                <a class="page-link" href="?page=<?= $i; ?>"><?= $i; ?></a>
+                            </li>
+                        <?php endfor; ?>
+
+                        <li class="page-item <?= ($page == $totalPages) ? 'disabled' : ''; ?>">
+                            <a class="page-link" href="?page=<?= $page + 1; ?>">Next</a>
+                        </li>
+                        <li class="page-item <?= ($page == $totalPages) ? 'disabled' : ''; ?>">
+                            <a class="page-link" href="?page=<?= $totalPages; ?>">Last</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
         </div>
     </div>
 </div>

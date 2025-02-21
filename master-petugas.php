@@ -1,15 +1,29 @@
-    <?php
-    include 'connection.php'; 
-    include 'sidebar.php';
+<?php
+include 'connection.php'; 
+include 'sidebar.php';
 
-    $sql_user = "SELECT l.user, l.pass, m.id_member, m.nm_member, m.alamat_member, m.telepon, m.email, m.gambar, m.NIK, r.nama_role
-    FROM login l INNER JOIN member m ON l.id_member = m.id_member 
-    INNER JOIN role r ON m.id_role = r.id_role
-    WHERE m.id_role = 2 AND m.tgl_keluar IS NULL";
+$perPage = 10;
+
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $perPage;
+
+$sql_user = "SELECT l.user, l.pass, m.id_member, m.nm_member, m.alamat_member, m.telepon, m.email, m.gambar, m.NIK, r.nama_role
+FROM login l 
+INNER JOIN member m ON l.id_member = m.id_member 
+INNER JOIN role r ON m.id_role = r.id_role
+WHERE m.id_role = 2 AND m.tgl_keluar IS NULL
+LIMIT $perPage OFFSET $offset"; 
+
+$result = $conn->query($sql_user);
+
+$sqlCount = "SELECT COUNT(*) AS total FROM member WHERE id_role = 2 AND tgl_keluar IS NULL";
+$resultCount = $conn->query($sqlCount);
+$rowCount = $resultCount->fetch_assoc();
+$totalRows = $rowCount['total'];
 
 
-    $result = $conn->query($sql_user);
-    ?>
+$totalPages = ceil($totalRows / $perPage);
+?>
 
     <div class="container">
         <div class="card">
@@ -68,7 +82,7 @@
                                                 <i class='fas fa-user-slash'></i>
                                             </button>
                                         </td>";
-                                    echo "</tr>";   
+                                    echo "</tr>";
                                 }
                             } else {
                                 echo "<tr><td colspan='9'>Tidak ada data user</td></tr>";
@@ -77,6 +91,33 @@
                         </tbody>
                     </table>
                 </div>
+
+                <div class="d-flex mt-3 pagination-container">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <li class="page-item <?= ($page == 1) ? 'disabled' : ''; ?>">
+                                <a class="page-link" href="?page=1">First</a>
+                            </li>
+                            <li class="page-item <?= ($page == 1) ? 'disabled' : ''; ?>">
+                                <a class="page-link" href="?page=<?= $page - 1; ?>">Previous</a>
+                            </li>
+
+                            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                <li class="page-item <?= ($page == $i) ? 'active' : ''; ?>">
+                                    <a class="page-link" href="?page=<?= $i; ?>"><?= $i; ?></a>
+                                </li>
+                            <?php endfor; ?>
+
+                            <li class="page-item <?= ($page == $totalPages) ? 'disabled' : ''; ?>">
+                                <a class="page-link" href="?page=<?= $page + 1; ?>">Next</a>
+                            </li>
+                            <li class="page-item <?= ($page == $totalPages) ? 'disabled' : ''; ?>">
+                                <a class="page-link" href="?page=<?= $totalPages; ?>">Last</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+
             </div>
         </div>
     </div>

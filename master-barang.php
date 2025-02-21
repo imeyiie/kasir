@@ -3,11 +3,24 @@ ob_start();
 include 'connection.php'; 
 include 'sidebar.php';
 
+$perPage = 10; 
+
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $perPage;
+
 $sql = "SELECT b.id, b.id_barang, b.nama_barang, b.merk, b.harga_beli, b.harga_jual, b.stok, b.satuan_barang, k.nama_kategori
         FROM barang b
-        JOIN kategori k ON b.id_kategori = k.id_kategori";
+        JOIN kategori k ON b.id_kategori = k.id_kategori
+        LIMIT $perPage OFFSET $offset";
 
 $result = $conn->query($sql);
+
+$sqlCount = "SELECT COUNT(*) AS total FROM barang";
+$resultCount = $conn->query($sqlCount);
+$rowCount = $resultCount->fetch_assoc();
+$totalRows = $rowCount['total'];
+
+$totalPages = ceil($totalRows / $perPage);
 ?>
 
 <div class="container">
@@ -24,7 +37,7 @@ $result = $conn->query($sql);
                 echo '<div class="alert alert-danger" role="alert" id="alert">Data Barang berhasil dihapus!</div>';
             }
             ?>
-            
+
             <div class="d-flex justify-content-between mb-3">
                 <div>
                     <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahData">Tambah</a>
@@ -54,8 +67,8 @@ $result = $conn->query($sql);
                     <tbody>
                         <?php
                         $totalBeli = 0;
-						$totalJual = 0;
-						$totalStok = 0;
+                        $totalJual = 0;
+                        $totalStok = 0;
                         if ($result->num_rows > 0) {
                             $no = 1;
                             while($row = $result->fetch_assoc()) {
@@ -106,6 +119,33 @@ $result = $conn->query($sql);
                     </tfoot>
                 </table>
             </div>
+
+            <div class="d-flex mt-3 pagination-container">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        <li class="page-item <?= ($page == 1) ? 'disabled' : ''; ?>">
+                            <a class="page-link" href="?page=1">First</a>
+                        </li>
+                        <li class="page-item <?= ($page == 1) ? 'disabled' : ''; ?>">
+                            <a class="page-link" href="?page=<?= $page - 1; ?>">Previous</a>
+                        </li>
+
+                        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                            <li class="page-item <?= ($page == $i) ? 'active' : ''; ?>">
+                                <a class="page-link" href="?page=<?= $i; ?>"><?= $i; ?></a>
+                            </li>
+                        <?php endfor; ?>
+
+                        <li class="page-item <?= ($page == $totalPages) ? 'disabled' : ''; ?>">
+                            <a class="page-link" href="?page=<?= $page + 1; ?>">Next</a>
+                        </li>
+                        <li class="page-item <?= ($page == $totalPages) ? 'disabled' : ''; ?>">
+                            <a class="page-link" href="?page=<?= $totalPages; ?>">Last</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+               
         </div>
     </div>
 </div>
@@ -147,8 +187,7 @@ if ($row) {
                                             $result = mysqli_query($conn, $sql);?>
                                     <?php
                                         while ($row = mysqli_fetch_assoc($result)) {
-                                        echo "<option value='{$row['id_kategori']}'>{$row['nama_kategori']}
-                                            </option>"; }?>
+                                        echo "<option value='{$row['id_kategori']}'>{$row['nama_kategori']}</option>"; } ?>
                                 </select></td>
                         </tr>
                         <tr>
@@ -185,7 +224,7 @@ if ($row) {
                             <td><input type="file" class="form-control" name="foto_barang" accept="image/*"></td>
                         </tr>
                         <tr>
-                        <td>Tanggal Input Barang</td>
+                            <td>Tanggal Input Barang</td>
                             <td><input type="text" class="form-control" name="tgl_input" value="<?php echo date('Y-m-d H:i:s'); ?>" readonly></td> 
                         </tr> 
                     </table>
@@ -309,7 +348,6 @@ searchInput.addEventListener("keyup", function() {
     });
 });
 
-
 document.getElementById('sortirBarang').addEventListener('click', function() {
     let rows = document.querySelectorAll("#barangTable tbody tr");
     
@@ -329,16 +367,15 @@ document.getElementById('refreshPage').addEventListener('click', function() {
 
 window.onload = function() {
     const alertElement = document.getElementById('alert');
-        if (alertElement) {
-            setTimeout(function() {
-                alertElement.style.display = 'none';
-            }, 3000); 
-        }
+    if (alertElement) {
+        setTimeout(function() {
+            alertElement.style.display = 'none';
+        }, 3000); 
+    }
 };
 
 function setDeleteId(id) {
     console.log("ID yang akan dihapus:", id); 
     document.getElementById('id_delete').value = id;
 }
-
 </script>
