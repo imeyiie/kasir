@@ -64,71 +64,78 @@ include 'connection.php'; ?>
 
         <div class="custom-card">
             <div class="custom-card-header">
-                <i class="fas fa-tags"></i> Kategori Barang
+                <i class="fas fa-dollar-sign"></i> Total Pendapatan
             </div>
             <div class="custom-card-body">
                 <center>
                     <?php
-                    $kategori = "SELECT COUNT(id_kategori) AS total_kategori FROM kategori";
-                    $kategori_query = mysqli_query($conn, $kategori);
-                    $kategori_data = mysqli_fetch_assoc($kategori_query);
-                    echo "<h3>{$kategori_data['total_kategori']}</h3>";
+                    $penjualan_query = "SELECT SUM(total) AS total_penjualan FROM penjualan";
+                    $penjualan_result = mysqli_query($conn, $penjualan_query);
+                    $penjualan_data = mysqli_fetch_assoc($penjualan_result);
+                    $total_penjualan = $penjualan_data['total_penjualan'];
+
+                    echo "<h3>Rp " . number_format($total_penjualan, 0, ',', '.') . "</h3>";
                     ?>
                 </center>
             </div>
             <div class="custom-card-footer">
-                <a href="master-kategori.php">Tabel Kategori &raquo;</a>
+                <a href="laporan-transaksi.php">Lihat Laporan &raquo;</a>
             </div>
         </div>
-
     </div>
-</div>++++++++
+</div>
 
+<div class="container" style="margin-top: -5px;">
+    <div class="card" style="margin-top: -5px; background-color: #f8f9fa;">
+        <div class="card-body">
+            <h5 class="card-title">Grafik Penjualan Per Bulan</h5>
+            <canvas id="salesChart"></canvas>
+        </div>
+    </div>
+</div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    <?php
 
+    $query = "SELECT MONTH(tanggal_input) AS bulan, SUM(total) AS total_penjualan 
+              FROM penjualan 
+              GROUP BY MONTH(tanggal_input)
+              ORDER BY bulan";
+    $result = mysqli_query($conn, $query);
 
+    $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    $salesData = array_fill(0, 12, 0);
 
+    while ($row = mysqli_fetch_assoc($result)) {
+        $monthIndex = $row['bulan'] - 1; 
+        $salesData[$monthIndex] = (int)$row['total_penjualan'];
+    }
+    ?>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    const salesChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: <?php echo json_encode($months); ?>, 
+            datasets: [{
+                label: 'Penjualan',
+                data: <?php echo json_encode($salesData); ?>, 
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
 
 
 <?php include "footer.php" ?>
