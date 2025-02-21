@@ -14,6 +14,15 @@ if (isset($_POST['update'])) {
     $stok = $_POST['stok'];
     $tgl_update = $_POST['tgl_update'];
 
+    $query_stok = mysqli_query($conn, "SELECT stok FROM barang WHERE id = $id");
+    $row = mysqli_fetch_assoc($query_stok);
+    $stok_lama = $row['stok'];
+
+    if ($stok < $stok_lama) {
+        echo "<script>alert('Stok hanya bisa ditambah, tidak bisa dikurangi!'); window.location.href='master-barang.php';</script>";
+        exit();
+    }
+
     if (!empty($_FILES['gambar']['name'])) {
         $gambar = $_FILES['gambar']['name'];
         $target_dir = "img/";
@@ -37,7 +46,6 @@ if (isset($_POST['update'])) {
         $gambar = $row['gambar'];
     }
     
-
     $update = mysqli_query($conn, "UPDATE barang SET 
         id_barang = '$id_barang',
         nama_barang = '$nama_barang',
@@ -62,6 +70,7 @@ if (isset($_POST['update'])) {
             </script>";
     }
 }
+
 
 $id = $_GET['id'];
 
